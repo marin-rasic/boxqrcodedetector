@@ -14,7 +14,7 @@ Avaliable options are:
 ```
 --width <int>
     Width of images
-    default: 600
+    default: 640
 --height <int>
     Height of images
     default: 480

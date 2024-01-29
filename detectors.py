@@ -48,7 +48,7 @@ class BoxObjectDetector:
         return height == self._image_height and width == self._image_width
 
     def resize_image(self, image: np.ndarray):
-        dim = (self._width, self._height)
+        dim = (self._image_width, self._image_height)
         cv.resize(image, dim)
 
     def find_objects(self, image: np.ndarray) -> typing.List[BoundingBox]:

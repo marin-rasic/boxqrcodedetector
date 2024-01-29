@@ -70,9 +70,9 @@ def draw_bounding_boxes(image: np.ndarray, boxes: typing.List[det.BoundingBox]):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-w", "--weights", help="path to weights (.pt) file for YOLOv8 model")
-    parser.add_argument("--width", type=int, help="width of images, default = 480", default=480)
-    parser.add_argument("--height", type=int, help="height of images, default = 600", default=600)
+    parser.add_argument("weights", help="path to weights (.pt) file for YOLOv8 model")
+    parser.add_argument("--width", type=int, help="width of images, default = 640", default=640)
+    parser.add_argument("--height", type=int, help="height of images, default = 480", default=480)
     parser.add_argument("-c", "--confidence", type=float, help="confidence threshold, default = 0.8", default=0.8)
     args = parser.parse_args()
 
