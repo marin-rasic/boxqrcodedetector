@@ -49,18 +49,18 @@ class BoxObjectDetector:
 
     def resize_image(self, image: np.ndarray):
         dim = (self._image_width, self._image_height)
-        cv.resize(image, dim)
+        return cv.resize(image, dim)
 
     def find_objects(self, image: np.ndarray) -> typing.List[BoundingBox]:
         if not self.is_right_image_size(image):
-            self.resize_image(image)
+            image = self.resize_image(image)
 
-        results = self._model(image, stream = True, conf = self._conf)
         bounding_boxes = list()
+        results = self._model(image, conf = self._conf)
         for res in results:
             for box in res.boxes:
                 x1, y1, x2, y2 = box.xyxy[0]
-                bb = BoundingBox(int(x1), int(y1), int(x2), int(y2), int(box.conf))
+                bb = BoundingBox(int(x1), int(y1), int(x2), int(y2), float(box.conf))
                 bounding_boxes.append(bb)
 
         return bounding_boxes
