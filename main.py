@@ -58,14 +58,20 @@ def draw_text(
         cv.putText(image, text, (x, y + text_h + font_scale - 1), font, font_scale, (0, 0, 0), font_thickness)
 
 
-def draw_bounding_boxes(image: np.ndarray, boxes: typing.List[det.BoundingBox]):
+def draw_bounding_boxes(image: np.ndarray, boxes: typing.List[det.BoundingBox], x_scale: float, y_scale: float):
     color = (0, 255, 255)
     thickness = 3
     for box in boxes:
-        cv.rectangle(image, box.upper_left_corner(), box.lower_right_corner(), color, thickness)
+        x1, y1 = box.upper_left_corner()
+        x2, y2 = box.lower_right_corner()
+
+        ulc = (int(x1*x_scale), int(y1*y_scale))
+        lrc = (int(x2*x_scale), int(y2*y_scale))
+
+        cv.rectangle(image, ulc, lrc, color, thickness)
         qr_code = box.get_qr_code()
         if qr_code:
-            draw_text(image, qr_code, box.upper_left_corner(), color)
+            draw_text(image, qr_code, ulc, color)
 
 
 if __name__ == "__main__":
@@ -89,6 +95,16 @@ if __name__ == "__main__":
         print("Cannot open camera")
         exit()
 
+    ret, frame = cap.read()
+    if not ret:
+        print("Can't receive frame")
+        exit()
+
+    camera_width = frame.shape[1]
+    camera_height = frame.shape[0]
+    x_scale = camera_width / args.width
+    y_scale = camera_height / args.height
+
     while True:
         event, values = window.read(timeout=20)
         if event == sg.WIN_CLOSED:
@@ -110,7 +126,7 @@ if __name__ == "__main__":
         bounding_boxes = object_detector.find_objects(frame)
         qr_code_finder.find_qr_codes(frame, bounding_boxes) # will add qr codes to bounding boxes
         qr_codes = qr_code_finder.get_qr_codes()
-        draw_bounding_boxes(frame, bounding_boxes)
+        draw_bounding_boxes(frame, bounding_boxes, x_scale, y_scale)
 
         imgbytes = cv.imencode(".png", frame)[1].tobytes()
         window["-IMAGE-"].update(data=imgbytes)
